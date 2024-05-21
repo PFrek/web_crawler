@@ -25,5 +25,27 @@ function getURLsFromHTML(htmlBody, baseURL) {
 	return links;
 }
 
+async function crawlPage(currentURL) {
+	let response = null;
+	try {
+		response = await fetch(currentURL);
+	} catch (err) {
+		console.log(err.message);
+		return
+	}
+	if (response.status >= 400) {
+		console.log(`Failed to fetch website: ${response.status}`);
+		return;
+	}
+	if (!response.headers.get('content-type').includes('text/html')) {
+		console.log(`Invalid content-type. Expected text/html but got ${response.headers['content-type']}`);
+		return;
+	}
 
-export { normalizeURL, getURLsFromHTML };
+	const htmlBody = await response.text()
+
+	console.log(htmlBody);
+}
+
+
+export { normalizeURL, getURLsFromHTML, crawlPage };
